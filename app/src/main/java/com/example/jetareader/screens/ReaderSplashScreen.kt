@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.jetareader.components.ReaderLogo
 import com.example.jetareader.navigation.ReaderScreens
 import kotlinx.coroutines.delay
 
@@ -57,8 +58,8 @@ fun ReaderSplashScreen( navController: NavController = NavController( context = 
    Surface(modifier = Modifier
        .padding(15.dp)
        .size(330.dp)
-           // Scale aqui
-       .scale( scale.value ),
+       // Scale aqui
+       .scale(scale.value),
        shape = CircleShape,
        color = Color.White,
        border = BorderStroke( width = 2.dp, color = Color.LightGray ) ) {
@@ -69,8 +70,7 @@ fun ReaderSplashScreen( navController: NavController = NavController( context = 
            verticalArrangement = Arrangement.Center
        ) {
 
-           Text( text = "A. Reader", style = MaterialTheme.typography.h3 ,
-               color = Color.Red.copy( alpha = 0.5f ) )
+           ReaderLogo()
 
            Spacer( modifier = Modifier.height( 15.dp ) )
            
