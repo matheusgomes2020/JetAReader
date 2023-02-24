@@ -21,7 +21,7 @@ class LoginScreenViewModel: ViewModel() {
 
     val loading: LiveData<Boolean> = _loading
 
-    fun signInWithEmailAndPassword( email: String, password: String )
+    fun signInWithEmailAndPassword( email: String, password: String, home: () -> Unit )
     = viewModelScope.launch{
 
         try {
@@ -35,7 +35,9 @@ class LoginScreenViewModel: ViewModel() {
 
                if ( task.isSuccessful ) {
 
-                   TODO( "take then home" )
+                   Log.d( "FB", "signInWithEmailAndPassword: Yayayay! ${task.result.toString() }" )
+                   //Todo: take then home
+                   home()
 
                }else {
 

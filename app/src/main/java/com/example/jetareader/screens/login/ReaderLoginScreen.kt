@@ -40,9 +40,12 @@ import com.example.jetareader.R
 import com.example.jetareader.components.EmailInput
 import com.example.jetareader.components.PassWordInput
 import com.example.jetareader.components.ReaderLogo
+import com.example.jetareader.navigation.ReaderScreens
 
 @Composable
-fun ReaderLoginScreen( navController: NavController) {
+fun ReaderLoginScreen(
+    navController: NavController,
+    viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
 
     val showLoginForm = rememberSaveable{
 
@@ -59,6 +62,11 @@ fun ReaderLoginScreen( navController: NavController) {
 
             if ( showLoginForm.value ) UserForm( loading = false, isCreateAccount = false) { email, password ->
                 //Todo FB login
+                viewModel.signInWithEmailAndPassword( email, password ) {
+
+                    navController.navigate( ReaderScreens.ReaderHomeScreen.name )
+
+                }
             }
             else {
 
