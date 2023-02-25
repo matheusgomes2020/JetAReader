@@ -54,15 +54,20 @@ fun ReaderSplashScreen( navController: NavController = NavController( context = 
 
         //Todo: check if there's a FB user, if so take them to Home Screen, otherwise, to LoginScreen
 
-        if ( FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty() ) {
 
-            navController.navigate( ReaderScreens.LoginScreen.name )
+      if ( FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty() ) {
+
+           navController.navigate( ReaderScreens.LoginScreen.name )
 
         }else {
 
             navController.navigate( ReaderScreens.ReaderHomeScreen.name )
 
         }
+
+
+
+
 
     }
 
