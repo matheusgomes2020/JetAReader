@@ -24,6 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import com.example.jetareader.components.FABContent
+import com.example.jetareader.components.ReaderAppBar
+import com.example.jetareader.components.TitleSection
 import com.example.jetareader.model.MBook
 import com.example.jetareader.navigation.ReaderScreens
 import com.google.firebase.FirebaseApp
@@ -70,7 +74,7 @@ fun HomeContent( navController: NavController ) {
                 "N/A"
     
     Column(Modifier.padding(2.dp) ,
-        verticalArrangement = Arrangement.SpaceEvenly) {
+        verticalArrangement = Arrangement.Top ) {
         
         Row( modifier = Modifier.align( alignment = Alignment.Start ) ) {
 
@@ -85,7 +89,7 @@ fun HomeContent( navController: NavController ) {
                 modifier = Modifier
                     .clickable {
 
-                        navController.navigate( ReaderScreens.ReaderStatsScreen.name )
+                        navController.navigate(ReaderScreens.ReaderStatsScreen.name)
 
                     }
                     .size(45.dp),
@@ -110,81 +114,6 @@ fun HomeContent( navController: NavController ) {
 }
 
 @Composable
-fun ReaderAppBar(
-
-    title: String,
-    showProfile: Boolean = true,
-    navController: NavController
-            ) {
-
-    TopAppBar(title = {
-
-                      Row( verticalAlignment = Alignment.CenterVertically ) {
-
-                          if ( showProfile ) {
-
-                              Icon(imageVector = Icons.Default.Favorite ,
-                                  contentDescription = "Logo Icon",
-                              modifier = Modifier
-                                  .clip(RoundedCornerShape(12.dp))
-                                  .scale(0.9f))
-
-                          }
-                          Text(text = title,
-                          color =  Color.Red.copy( alpha = 0.7f ),
-                              style = androidx.compose.ui.text.TextStyle( fontWeight = FontWeight.Bold, fontSize = 20.sp ) )
-
-                          Spacer( modifier = Modifier.width( 150.dp ) )
-
-
-
-
-
-
-                      }
-
-    },
-        actions = {
-
-                  IconButton(onClick = {
-
-                      FirebaseAuth.getInstance().signOut().run {
-
-                          navController.navigate( ReaderScreens.LoginScreen.name )
-
-                      }
-
-                  }) {
-                      
-                      Icon(imageVector = Icons.Filled.Logout , contentDescription = "Logout" ,
-                      //tint = Color.Green.copy( alpha = 0.4f )
-                      )
-                      
-                  }
-
-        },
-        backgroundColor = Color.Transparent,
-        elevation = 0.dp)
-
-}
-
-@Composable
-fun TitleSection( modifier: Modifier = Modifier,
-                    label: String ) {
-    
-    Surface( modifier = modifier.padding( start = 5.dp, top = 1.dp ) ) {
-        
-        Text( text = label ,
-            fontSize = 19.sp,
-            fontStyle = FontStyle.Normal,
-            textAlign = TextAlign.Left )
-        
-        
-    }
-    
-}
-
-@Composable
 fun ReadingRightNoteArea( books: List<MBook>,
                           navController: NavController ) {
 
@@ -192,17 +121,54 @@ fun ReadingRightNoteArea( books: List<MBook>,
 
 }
 
+@Preview
 @Composable
-fun FABContent(onTap: () -> Unit) {
+fun ListCard( book: MBook = MBook( "asfd", "Running", "Me and You", "Hello world"),
+              onPressDetails: (String) -> Unit = {  } ) {
 
-    FloatingActionButton(onClick = { onTap() },
-    shape = RoundedCornerShape( 50.dp ),
-        backgroundColor = Color( 0xFF92CBDF  ) ) {
-        
-        Icon(imageVector = Icons.Default.Add,
-            contentDescription = "Add a Book" ,
-            tint = Color.White )
-        
+    val context = LocalContext.current
+
+    val resources = context.resources
+
+    val spacing = 10.dp
+
+    val displayMetrics = resources.displayMetrics
+
+    val screenWidth = displayMetrics.widthPixels / displayMetrics.density
+
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        backgroundColor = Color.White,
+        elevation = 6.dp,
+        modifier = Modifier
+            .padding(16.dp)
+            .height(242.dp)
+            .width(202.dp)
+            .clickable { onPressDetails.invoke(book.title.toString()) } ) {
+
+        Column( modifier = Modifier.width( screenWidth.dp - ( spacing * 2 ) ) ,
+            horizontalAlignment = Alignment.Start ) {
+
+            Row( horizontalArrangement = Arrangement.Center ) {
+
+                Image(painter = rememberImagePainter(data = "") ,
+                    contentDescription = "book image",
+                modifier = Modifier
+                    .height(140.dp)
+                    .width(100.dp)
+                    .padding(4.dp))
+                
+                Spacer(modifier = Modifier.width( 50.dp  ) )
+
+                Column() {
+                    
+                }
+                
+            }
+            
+        }
+
     }
-    
+
+
 }
