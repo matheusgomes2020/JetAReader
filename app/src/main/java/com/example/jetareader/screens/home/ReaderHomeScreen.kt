@@ -111,6 +111,8 @@ fun HomeContent( navController: NavController ) {
             }
             
         }
+
+        ListCard()
         
     }
     
@@ -177,6 +179,7 @@ fun ListCard( book: MBook = MBook( "asfd", "Running", "Me and You", "Hello world
                 
             }
 
+
             Text( text = "Book title", modifier = Modifier.padding( 4.dp ),
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
@@ -184,8 +187,12 @@ fun ListCard( book: MBook = MBook( "asfd", "Running", "Me and You", "Hello world
 
             Text( text = "Authors All...", modifier = Modifier.padding( 4.dp ),
                 style = MaterialTheme.typography.caption )
-            
+
+            RoundedButton( label = "Reading", radius = 70 )
+
         }
+
+
 
     }
 
@@ -209,6 +216,42 @@ fun BookingRating(score: Double = 4.5 ) {
 
             Text(text = score.toString(), style = MaterialTheme.typography.subtitle1 )
             
+        }
+
+        Row( horizontalArrangement = Arrangement.End ,
+            verticalAlignment = Alignment.Bottom ) {
+
+
+
+        }
+
+    }
+
+}
+
+@Preview
+@Composable
+fun RoundedButton(
+
+    label: String = "Reading" ,
+    radius: Int = 29,
+    onPress: () -> Unit = {  } ) {
+
+    Surface(modifier = Modifier.clip( RoundedCornerShape(
+
+        bottomEndPercent = radius,
+        topStartPercent = radius )),
+    color = Color( 0xFF92CBDF )) {
+
+        Column(modifier = Modifier
+            .width(90.dp)
+            .heightIn(40.dp)
+            .clickable { onPress.invoke() },
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally ) {
+
+            Text( text = label, style = androidx.compose.ui.text.TextStyle( color = Color.White, fontSize = 15.sp ) )
+
         }
 
     }
