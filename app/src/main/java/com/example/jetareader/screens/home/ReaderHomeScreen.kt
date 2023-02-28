@@ -1,9 +1,12 @@
 package com.example.jetareader.screens.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -28,9 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.jetareader.components.FABContent
-import com.example.jetareader.components.ReaderAppBar
-import com.example.jetareader.components.TitleSection
+import com.example.jetareader.components.*
 import com.example.jetareader.model.MBook
 import com.example.jetareader.navigation.ReaderScreens
 import com.google.firebase.FirebaseApp
@@ -68,6 +69,15 @@ fun Home(  navController: NavController = NavController( LocalContext.current ) 
 
 @Composable
 fun HomeContent( navController: NavController ) {
+
+    val listOfBooks = listOf(
+          MBook(id = "dadfa", title = "Hello Again", authors = "All of us", notes = null),
+        MBook(id = "dadfa", title = " Again", authors = "All of us", notes = null),
+        MBook(id = "dadfa", title = "Hello ", authors = "The world us", notes = null),
+        MBook(id = "dadfa", title = "Hello Again", authors = "All of us", notes = null),
+        MBook(id = "dadfa", title = "Hello Again", authors = "All of us", notes = null)
+                            )
+        //me @gmail.com
 
     val email = FirebaseAuth.getInstance().currentUser?.email
 
@@ -112,148 +122,63 @@ fun HomeContent( navController: NavController ) {
             
         }
 
-        ListCard()
+        ReadingRightNoteArea(books = listOf() ,
+            navController = navController )
+
+        TitleSection( label = "Reading List" )
+
+        BookListArea( listOfBooks = listOfBooks , navController = navController )
         
     }
     
 }
 
 @Composable
+fun BookListArea(listOfBooks: List<MBook>,
+                 navController: NavController) {
+
+    HorizontalScroollableComponent( listOfBooks ) {
+
+        Log.d( "TAG", "BookListArea: $it" )
+
+        //Todo: on card clicked navigate to details
+
+    }
+
+}
+
+@Composable
+fun HorizontalScroollableComponent(listOfBooks: List<MBook>, onCardPressed: (String) -> Unit) {
+
+    val scrollState = rememberScrollState()
+
+    Row( modifier = Modifier
+        .fillMaxWidth()
+        .height(280.dp)
+        .horizontalScroll(scrollState) ) {
+
+        for ( book in listOfBooks ) {
+
+            ListCard( book ) {
+
+                onCardPressed( it )
+
+            }
+
+        }
+
+    }
+
+}
+
+@Composable
 fun ReadingRightNoteArea( books: List<MBook>,
                           navController: NavController ) {
 
+    ListCard()
 
 
 }
 
-@Preview
-@Composable
-fun ListCard( book: MBook = MBook( "asfd", "Running", "Me and You", "Hello world"),
-              onPressDetails: (String) -> Unit = {  } ) {
-
-    val context = LocalContext.current
-
-    val resources = context.resources
-
-    val spacing = 10.dp
-
-    val displayMetrics = resources.displayMetrics
-
-    val screenWidth = displayMetrics.widthPixels / displayMetrics.density
-
-    Card(
-        shape = RoundedCornerShape(20.dp),
-        backgroundColor = Color.White,
-        elevation = 6.dp,
-        modifier = Modifier
-            .padding(16.dp)
-            .height(242.dp)
-            .width(202.dp)
-            .clickable { onPressDetails.invoke(book.title.toString()) } ) {
-
-        Column( modifier = Modifier.width( screenWidth.dp - ( spacing * 2 ) ) ,
-            horizontalAlignment = Alignment.Start ) {
-
-            Row( horizontalArrangement = Arrangement.Center ) {
-
-                Image(painter = rememberImagePainter(data = "") ,
-                    contentDescription = "book image",
-                modifier = Modifier
-                    .height(140.dp)
-                    .width(100.dp)
-                    .padding(4.dp))
-                
-                Spacer( modifier = Modifier.width( 50.dp  ) )
-
-                Column( modifier = Modifier.padding( top = 25.dp ),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                    
-                    Icon(imageVector = Icons.Rounded.FavoriteBorder ,
-                        contentDescription = "Fav Icon" ,
-                        modifier = Modifier.padding( bottom = 1.dp ) )
-
-                    BookingRating( score = 3.5 )
-                    
-                }
-                
-            }
 
 
-            Text( text = "Book title", modifier = Modifier.padding( 4.dp ),
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis )
-
-            Text( text = "Authors All...", modifier = Modifier.padding( 4.dp ),
-                style = MaterialTheme.typography.caption )
-
-            RoundedButton( label = "Reading", radius = 70 )
-
-        }
-
-
-
-    }
-
-
-}
-
-@Composable
-fun BookingRating(score: Double = 4.5 ) {
-
-    Surface(modifier = Modifier
-        .height(70.dp)
-        .padding(4.dp),
-        shape = RoundedCornerShape( 56.dp ),
-        elevation = 6.dp,
-        color = Color.White) {
-
-        Column(modifier = Modifier.padding( 4.dp )) {
-
-            Icon(imageVector = Icons.Filled.StarBorder, contentDescription = "Start",
-            modifier = Modifier.padding( 3.dp ) )
-
-            Text(text = score.toString(), style = MaterialTheme.typography.subtitle1 )
-            
-        }
-
-        Row( horizontalArrangement = Arrangement.End ,
-            verticalAlignment = Alignment.Bottom ) {
-
-
-
-        }
-
-    }
-
-}
-
-@Preview
-@Composable
-fun RoundedButton(
-
-    label: String = "Reading" ,
-    radius: Int = 29,
-    onPress: () -> Unit = {  } ) {
-
-    Surface(modifier = Modifier.clip( RoundedCornerShape(
-
-        bottomEndPercent = radius,
-        topStartPercent = radius )),
-    color = Color( 0xFF92CBDF )) {
-
-        Column(modifier = Modifier
-            .width(90.dp)
-            .heightIn(40.dp)
-            .clickable { onPress.invoke() },
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally ) {
-
-            Text( text = label, style = androidx.compose.ui.text.TextStyle( color = Color.White, fontSize = 15.sp ) )
-
-        }
-
-    }
-
-}
