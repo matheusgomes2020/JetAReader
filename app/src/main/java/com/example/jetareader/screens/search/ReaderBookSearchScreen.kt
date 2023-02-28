@@ -1,11 +1,34 @@
 package com.example.jetareader.screens.search
 
+import android.annotation.SuppressLint
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.example.jetareader.components.ReaderAppBar
+import com.example.jetareader.navigation.ReaderScreens
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Preview
 @Composable
-fun ReaderSearchScreen( navController: NavController) {
+fun SearchScreen(navController: NavController = NavController( LocalContext.current )) {
 
+    Scaffold(topBar = {
 
+        ReaderAppBar(title = "Search Books" ,
+            icon = Icons.Default.ArrowBack,
+            navController = navController,
+        showProfile = false ) {
+
+            navController.navigate( ReaderScreens.ReaderHomeScreen.name )
+
+        }
+
+    }) {
+
+    }
 
 }

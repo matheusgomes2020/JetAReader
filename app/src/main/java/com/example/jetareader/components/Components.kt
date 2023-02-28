@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -161,10 +162,12 @@ fun TitleSection( modifier: Modifier = Modifier,
 
 @Composable
 fun ReaderAppBar(
-
     title: String,
+    icon: ImageVector? = null,
     showProfile: Boolean = true,
-    navController: NavController
+    navController: NavController,
+    onArrowBackClicked: () -> Unit = {  }
+
 ) {
 
     TopAppBar(title = {
@@ -180,15 +183,24 @@ fun ReaderAppBar(
                         .scale(0.9f))
 
             }
+
+            if ( icon != null ) {
+
+                Icon( imageVector = icon, contentDescription = "arrow back",
+                tint = Color.Red.copy( alpha = 0.7f ) ,
+                modifier = Modifier.clickable {
+
+                    onArrowBackClicked.invoke()
+
+                })
+
+            }
+
+            Spacer( modifier = Modifier.width( 40.dp ) )
+
             Text(text = title,
                 color =  Color.Red.copy( alpha = 0.7f ),
                 style = TextStyle( fontWeight = FontWeight.Bold, fontSize = 20.sp ) )
-
-            Spacer( modifier = Modifier.width( 150.dp ) )
-
-
-
-
 
 
         }
@@ -206,9 +218,15 @@ fun ReaderAppBar(
 
             }) {
 
-                Icon(imageVector = Icons.Filled.Logout , contentDescription = "Logout" ,
-                    //tint = Color.Green.copy( alpha = 0.4f )
-                )
+                if ( showProfile ) Row() {
+
+                    Icon(imageVector = Icons.Filled.Logout , contentDescription = "Logout" ,
+                        //tint = Color.Green.copy( alpha = 0.4f )
+                    )
+
+                }else Box{}
+
+
 
             }
 
@@ -361,7 +379,8 @@ fun ListCard(book: MBook = MBook( "asfd", "Running", "Me and You", "Hello world"
 
             Row(horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom ,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .fillMaxHeight() ) {
 
                 RoundedButton( label = "Reading", radius = 70 )
