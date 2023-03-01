@@ -73,6 +73,9 @@ fun BookList(navController: NavController,
 
     val listOfBooks = viewModel.list
     if (viewModel.isLoading){
+
+
+
         Row(
             modifier = Modifier.padding(end = 2.dp),
             horizontalArrangement = Arrangement.SpaceAround,
