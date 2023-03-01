@@ -37,7 +37,7 @@ class BookSearchViewModel @Inject constructor( private val repository: BookRepos
             listOfBooks.value.loading = true
             listOfBooks.value = repository.getBooks( query )
 
-            Log.d( "DATA", "searchBooks: ${ listOfBooks.value.data.toString() }")
+            Log.d( "Search", "searchBooks: ${ listOfBooks.value.data }")
 
             if ( listOfBooks.value.data.toString().isNotEmpty() ) listOfBooks.value.loading = false
 
