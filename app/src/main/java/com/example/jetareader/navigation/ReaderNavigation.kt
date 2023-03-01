@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.jetareader.screens.ReaderSplashScreen
+import com.example.jetareader.screens.details.BookDetailsScreen
 import com.example.jetareader.screens.home.Home
 import com.example.jetareader.screens.login.ReaderLoginScreen
 import com.example.jetareader.screens.search.BookSearchViewModel
@@ -47,6 +48,12 @@ fun ReaderNavigation() {
             val searchViewModel = hiltViewModel<BookSearchViewModel>()
 
             SearchScreen( navController = navController , viewModel = searchViewModel)
+
+        }
+
+        composable( ReaderScreens.DetailScreen.name ) {
+
+            BookDetailsScreen( navController = navController, bookId = "" )
 
         }
 

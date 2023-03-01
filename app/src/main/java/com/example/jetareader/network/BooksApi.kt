@@ -10,10 +10,11 @@ import javax.inject.Singleton
 @Singleton
 interface BooksApi {
 
-    @GET("Volumes")
-    suspend fun getAllBooks( @Query("q") query: String ): Book
+    @GET("volumes")
+    suspend fun getAllBooks(@Query("q") query: String): Book
 
-    @GET("Volumes/{bookId}")
-    suspend fun getBookInfo(@Path("bookId") bookId: String ): Item
+    @GET("volumes/{bookId}")
+    suspend fun getBookInfo(@Path("bookId") bookId: String): Item
+
 
 }

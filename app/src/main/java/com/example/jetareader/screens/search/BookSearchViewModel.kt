@@ -27,7 +27,7 @@ class BookSearchViewModel @Inject constructor( private val repository: BookRepos
     }
 
     private fun loadBooks() {
-        searchBooks("flutter")
+        searchBooks("money")
     }
 
     fun searchBooks(query: String) {

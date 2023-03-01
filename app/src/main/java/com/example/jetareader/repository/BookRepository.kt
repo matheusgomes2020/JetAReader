@@ -6,52 +6,34 @@ import com.example.jetareader.model.Item
 import com.example.jetareader.network.BooksApi
 import javax.inject.Inject
 
-class BookRepository @Inject constructor( private val api: BooksApi ) {
-
-    private val dataOrException =
-        DataOrException<List<Item>, Boolean, Exception>()
-
-    private val bookInfoDataOrException =
-        DataOrException<Item, Boolean, Exception>()
-
-    suspend fun getBooks( searchQuery: String ): Resource<List<Item>> {
+class BookRepository @Inject constructor(private val api: BooksApi) {
+    suspend fun getBooks(searchQuery: String): Resource<List<Item>>{
 
         return try {
+            Resource.Loading(data = true)
 
-            Resource.Loading( data = true )
+            val itemList = api.getAllBooks(searchQuery).items
+            if (itemList.isNotEmpty()) Resource.Loading(data = false)
+            Resource.Success(data = itemList)
 
-            val itemList = api.getAllBooks( searchQuery ).items
-
-            if ( itemList.isNotEmpty() ) Resource.Loading( data = false )
-
-            Resource.Success( data = itemList )
-
-        }catch ( exception: Exception ) {
-
-            Resource.Error( message = exception.message.toString() )
-
+        }catch (exception: Exception) {
+            Resource.Error(message = exception.message.toString())
         }
 
     }
 
-    suspend fun getBookInfo( bookId: String ): Resource<Item> {
-
+    suspend fun getBookInfo(bookId: String): Resource<Item> {
         val response = try {
+            Resource.Loading(data = true)
+            api.getBookInfo(bookId)
 
-            Resource.Loading( data = true )
-
-            api.getBookInfo( bookId )
-
-        }catch ( exception: Exception ) {
-
-            return Resource.Error( message = "An error ocurred ${ exception.message.toString() }" )
-
+        }catch (exception: Exception){
+            return Resource.Error(message = "An error occurred ${exception.message.toString()}")
         }
-
-        Resource.Loading( data = false)
-
-        return Resource.Success( data = response )
-
+        Resource.Loading(data = false)
+        return Resource.Success(data = response)
     }
+
 
 }
+
