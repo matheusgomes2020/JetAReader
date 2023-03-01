@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.jetareader.components.InputField
@@ -32,9 +33,8 @@ import com.example.jetareader.model.MBook
 import com.example.jetareader.navigation.ReaderScreens
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Preview
 @Composable
-fun SearchScreen(navController: NavController = NavController( LocalContext.current )) {
+fun SearchScreen( navController: NavController, viewModel: BookSearchViewModel =  hiltViewModel() ) {
 
     Scaffold(topBar = {
 
@@ -58,7 +58,10 @@ fun SearchScreen(navController: NavController = NavController( LocalContext.curr
 
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp) ) {
+                        .padding(16.dp),
+                        viewModel) { query ->
+
+                    viewModel.searchBooks( query )
 
                     Log.d( "TAG", "SearchScreen: $it")
 
@@ -121,9 +124,10 @@ fun BookRow(book: MBook,
             val imageUrl =  "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=80&q=80"
             Image(painter = rememberImagePainter( data = imageUrl ) ,
                 contentDescription = "book image",
-            modifier = Modifier.width( 80.dp )
+            modifier = Modifier
+                .width(80.dp)
                 .fillMaxHeight()
-                .padding( end = 4.dp ) )
+                .padding(end = 4.dp) )
 
             Column() {
 
@@ -150,6 +154,7 @@ fun BookRow(book: MBook,
 fun SearchForm(
 
     modifier: Modifier = Modifier,
+    viewModel: BookSearchViewModel,
     loading: Boolean = false,
     hint: String = "Search",
     onSearch: ( String ) -> Unit = {  } ) {
