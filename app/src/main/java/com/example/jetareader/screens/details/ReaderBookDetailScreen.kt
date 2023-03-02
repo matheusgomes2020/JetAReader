@@ -29,6 +29,8 @@ import com.example.jetareader.data.Resource
 import com.example.jetareader.model.Item
 import com.example.jetareader.model.MBook
 import com.example.jetareader.navigation.ReaderScreens
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -152,9 +154,21 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
 
         // Save this book to firestore database
 
-        val book = MBook
+        val book = MBook(
 
-        saveToFirebase( book )
+            title = bookData.title,
+            authors = bookData.authors.toString(),
+            description = bookData.description,
+            categories = bookData.categories.toString(),
+            notes = "",
+            photoUrl = bookData.imageLinks.thumbnail,
+            publishedDate = bookData.publishedDate,
+            pageCount = bookData.pageCount.toString(),
+            rating = 0.0,
+            googleBookId = googleBookId,
+            userId = FirebaseAuth.getInstance().currentUser?.uid.toString() )
+
+        saveToFirebase( book, navController = navController )
 
         }
 
@@ -168,9 +182,40 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
 
 }
 
-fun saveToFirebase( book: MBook ) {
+fun saveToFirebase( book: MBook, navController: NavController ) {
 
     val db = FirebaseFirestore.getInstance()
+
+    val dbCollection = db.collection( "books" )
+
+    if ( book.toString().isEmpty() ) {
+
+        dbCollection.add( book )
+            .addOnSuccessListener { documentRef ->
+
+                val docId = documentRef.id
+
+                dbCollection.document( docId )
+                    .update( hashMapOf( "id" to docId) as Map<String, Any> )
+                    .addOnCompleteListener { task ->
+
+                        if ( task.isSuccessful ) {
+
+                            navController.popBackStack()
+
+                        }
+
+                    }.addOnFailureListener {
+                        Log.w("Error", "SaveToFirebase:  Error updating doc", it )
+                    }
+
+            }
+
+    }else {
+
+
+
+    }
 
 }
 
