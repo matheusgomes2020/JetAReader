@@ -24,9 +24,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.jetareader.components.ReaderAppBar
+import com.example.jetareader.components.RoundedButton
 import com.example.jetareader.data.Resource
 import com.example.jetareader.model.Item
+import com.example.jetareader.model.MBook
 import com.example.jetareader.navigation.ReaderScreens
+import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -142,7 +145,33 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
     }
 
     //Buttons
+    Row(modifier = Modifier.padding(top = 6.dp),
+        horizontalArrangement = Arrangement.SpaceAround) {
+        RoundedButton( label = "Save" ) {
+        }
 
+        // Save this book to firestore database
+
+        val book = MBook
+
+        saveToFirebase( book )
+
+        }
+
+    RoundedButton( label = "Cancel" ) {
+
+        navController.popBackStack()
+
+    }
+
+    Spacer(modifier = Modifier.width( 25.dp ) )
 
 }
+
+fun saveToFirebase( book: MBook ) {
+
+    val db = FirebaseFirestore.getInstance()
+
+}
+
             
