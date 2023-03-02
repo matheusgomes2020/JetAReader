@@ -34,8 +34,9 @@ import com.example.jetareader.navigation.ReaderScreens
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SearchScreen( navController: NavController
-                  , viewModel: BookSearchViewModel =  hiltViewModel() ) {
+fun SearchScreen(navController: NavController,
+                 viewModel: BookSearchViewModel = hiltViewModel()
+) {
 
     Scaffold(topBar = {
         ReaderAppBar(title = "Search Books",
@@ -73,9 +74,6 @@ fun BookList(navController: NavController,
 
     val listOfBooks = viewModel.list
     if (viewModel.isLoading){
-
-
-
         Row(
             modifier = Modifier.padding(end = 2.dp),
             horizontalArrangement = Arrangement.SpaceAround,
@@ -131,17 +129,17 @@ fun BookRow(
                 Text(text = book.volumeInfo.title, overflow = TextOverflow.Ellipsis)
                 Text(text =  "Author: ${book.volumeInfo.authors}",
                     overflow = TextOverflow.Clip,
-                    //fontStyle = FontStyle.Italic,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                     style = MaterialTheme.typography.caption)
 
                 Text(text =  "Date: ${book.volumeInfo.publishedDate}",
                     overflow = TextOverflow.Clip,
-                    //fontStyle = FontStyle.Italic,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                     style = MaterialTheme.typography.caption)
 
                 Text(text =  "${book.volumeInfo.categories}",
                     overflow = TextOverflow.Clip,
-                    //fontStyle = FontStyle.Italic,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                     style = MaterialTheme.typography.caption)
 
 

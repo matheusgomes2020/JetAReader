@@ -37,66 +37,54 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun BookDetailsScreen(navController: NavController,
                       bookId: String,
-                      viewModel: DetailsViewModel = hiltViewModel() ) {
+                      viewModel: DetailsViewModel = hiltViewModel()) {
 
     Scaffold(topBar = {
-        ReaderAppBar(
-            title = "Book Details",
+        ReaderAppBar(title = "Book Details",
             icon = Icons.Default.ArrowBack,
             showProfile = false,
-            navController = navController
-        ) {
+            navController = navController){
             navController.navigate(ReaderScreens.SearchScreen.name)
         }
     }) {
 
-        Surface(
-            modifier = Modifier
-                .padding(3.dp)
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier.padding(top = 12.dp),
+        Surface(modifier = Modifier
+            .padding(3.dp)
+            .fillMaxSize()) {
+            Column(modifier = Modifier.padding(top = 12.dp),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                horizontalAlignment = Alignment.CenterHorizontally) {
 
-                val bookInfo = produceState<Resource<Item>>(initialValue = Resource.Loading() ) {
-
-                    value = viewModel.getBookInfo( bookId )
-
+                val bookInfo = produceState<Resource<Item>>(initialValue = Resource.Loading()){
+                    value = viewModel.getBookInfo(bookId)
                 }.value
 
-                if ( bookInfo.data == null ) {
-
+                if (bookInfo.data == null) {
                     Row() {
-
                         LinearProgressIndicator()
                         Text(text = "Loading...")
-
                     }
 
-                }else {
-
-                    Text(text = "Book: ${ bookInfo.data.volumeInfo.title }" )
-
+                }else{
+                    ShowBookDetails(bookInfo, navController)
                 }
+                //  Log.d("Deets", "BookDetailsScreen: ${bookInfo.data.toString()}")
 
-                Log.d( "Deets", "BookDetailsScreen: ${bookInfo.data.toString()}" )
 
             }
 
-        }
 
+        }
     }
+
 }
 
 @Composable
 fun ShowBookDetails(bookInfo: Resource<Item>,
                     navController: NavController) {
-
     val bookData = bookInfo.data?.volumeInfo
     val googleBookId = bookInfo.data?.id
+
 
     Card(modifier = Modifier.padding(34.dp),
         shape = CircleShape, elevation = 4.dp) {
@@ -107,8 +95,8 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
                 .height(90.dp)
                 .padding(1.dp))
 
-    }
 
+    }
     Text(text = bookData?.title.toString(),
         style = MaterialTheme.typography.h6,
         overflow = TextOverflow.Ellipsis,
@@ -125,91 +113,78 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
 
     Spacer(modifier = Modifier.height(5.dp))
 
-    val cleanDescription = HtmlCompat.fromHtml( bookData!!.description,
-    HtmlCompat.FROM_HTML_MODE_LEGACY ).toString()
-
+    val cleanDescription = HtmlCompat.fromHtml(bookData!!.description,
+        HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
     val localDims = LocalContext.current.resources.displayMetrics
     Surface(modifier = Modifier
         .height(localDims.heightPixels.dp.times(0.09f))
         .padding(4.dp),
         shape = RectangleShape,
-        border = BorderStroke(1.dp, Color.DarkGray)
-    ) {
+        border = BorderStroke(1.dp, Color.DarkGray)) {
 
         LazyColumn(modifier = Modifier.padding(3.dp)) {
             item {
 
-                Text(text = cleanDescription )
+                Text(text = cleanDescription)
             }
 
         }
-
     }
 
     //Buttons
     Row(modifier = Modifier.padding(top = 6.dp),
         horizontalArrangement = Arrangement.SpaceAround) {
-        RoundedButton( label = "Save" ) {
-        }
+        RoundedButton(label = "Save"){
+            //save this book to the firestore database
+            val book = MBook(
+                title = bookData.title,
+                authors = bookData.authors.toString(),
+                description = bookData.description,
+                categories = bookData.categories.toString(),
+                notes = "",
+                photoUrl = bookData.imageLinks.thumbnail,
+                publishedDate = bookData.publishedDate,
+                pageCount = bookData.pageCount.toString(),
+                rating = 0.0,
+                googleBookId = googleBookId,
+                userId = FirebaseAuth.getInstance().currentUser?.uid.toString())
 
-        // Save this book to firestore database
-
-        val book = MBook(
-
-            title = bookData.title,
-            authors = bookData.authors.toString(),
-            description = bookData.description,
-            categories = bookData.categories.toString(),
-            notes = "",
-            photoUrl = bookData.imageLinks.thumbnail,
-            publishedDate = bookData.publishedDate,
-            pageCount = bookData.pageCount.toString(),
-            rating = 0.0,
-            googleBookId = googleBookId,
-            userId = FirebaseAuth.getInstance().currentUser?.uid.toString() )
-
-        saveToFirebase( book, navController = navController )
+            saveToFirebase(book, navController = navController)
 
         }
-
-    RoundedButton( label = "Cancel" ) {
-
-        navController.popBackStack()
+        Spacer(modifier = Modifier.width(25.dp))
+        RoundedButton(label = "Cancel"){
+            navController.popBackStack()
+        }
 
     }
 
-    Spacer(modifier = Modifier.width( 25.dp ) )
 
 }
 
-fun saveToFirebase( book: MBook, navController: NavController ) {
 
+fun saveToFirebase(book: MBook, navController: NavController) {
     val db = FirebaseFirestore.getInstance()
+    val dbCollection = db.collection("books")
 
-    val dbCollection = db.collection( "books" )
-
-    if ( book.toString().isEmpty() ) {
-
-        dbCollection.add( book )
+    if (book.toString().isNotEmpty()){
+        dbCollection.add(book)
             .addOnSuccessListener { documentRef ->
-
                 val docId = documentRef.id
-
-                dbCollection.document( docId )
-                    .update( hashMapOf( "id" to docId) as Map<String, Any> )
+                dbCollection.document(docId)
+                    .update(hashMapOf("id" to docId) as Map<String, Any>)
                     .addOnCompleteListener { task ->
-
-                        if ( task.isSuccessful ) {
-
+                        if (task.isSuccessful) {
                             navController.popBackStack()
-
                         }
 
+
                     }.addOnFailureListener {
-                        Log.w("Error", "SaveToFirebase:  Error updating doc", it )
+                        Log.w("Error", "SaveToFirebase:  Error updating doc",it )
                     }
 
             }
+
 
     }else {
 
@@ -217,6 +192,6 @@ fun saveToFirebase( book: MBook, navController: NavController ) {
 
     }
 
+
 }
 
-            

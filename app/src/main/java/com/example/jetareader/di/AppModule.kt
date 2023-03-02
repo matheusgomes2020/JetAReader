@@ -3,7 +3,9 @@ package com.example.jetareader.di
 import androidx.compose.ui.unit.Constraints
 import com.example.jetareader.network.BooksApi
 import com.example.jetareader.repository.BookRepository
+import com.example.jetareader.repository.FireRepository
 import com.example.jetareader.utils.Constants
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +18,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn( SingletonComponent::class )
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideFirebaseBookRepository()
+    = FireRepository( queryBook = FirebaseFirestore.getInstance()
+        .collection( "books" ) )
 
     @Singleton
     @Provides
