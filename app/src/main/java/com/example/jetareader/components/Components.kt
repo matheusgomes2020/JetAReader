@@ -310,9 +310,9 @@ fun BookingRating(score: Double = 4.5 ) {
 
 }
 
-@Preview
+
 @Composable
-fun ListCard(book: MBook = MBook( "asfd", "Running", "Me and You", "Hello world"),
+fun ListCard(book: MBook,
              onPressDetails: (String) -> Unit = {  } ) {
 
     val context = LocalContext.current
@@ -340,7 +340,7 @@ fun ListCard(book: MBook = MBook( "asfd", "Running", "Me and You", "Hello world"
 
             Row( horizontalArrangement = Arrangement.Center ) {
 
-                Image(painter = rememberImagePainter(data = "") ,
+                Image(painter = rememberImagePainter( data = book.photoUrl.toString() ) ,
                     contentDescription = "book image",
                     modifier = Modifier
                         .height(140.dp)

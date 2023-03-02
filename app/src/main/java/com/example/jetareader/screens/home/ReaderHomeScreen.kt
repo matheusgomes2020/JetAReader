@@ -129,9 +129,7 @@ fun BookListArea(listOfBooks: List<MBook>,
 
     HorizontalScroollableComponent( listOfBooks ) {
 
-        Log.d( "TAG", "BookListArea: $it" )
-
-        //Todo: on card clicked navigate to details
+        navController.navigate( ReaderScreens.UpdateScreen.name +"/$it" )
 
     }
 
@@ -165,7 +163,7 @@ fun HorizontalScroollableComponent(listOfBooks: List<MBook>, onCardPressed: (Str
 fun ReadingRightNoteArea( books: List<MBook>,
                           navController: NavController ) {
 
-    ListCard()
+    //ListCard(books[0])
 
 
 }
