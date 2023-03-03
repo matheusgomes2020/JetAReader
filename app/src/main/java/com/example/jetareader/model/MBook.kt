@@ -5,7 +5,6 @@ import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 
 data class MBook(
-
     @Exclude var id: String? = null,
     var title: String? = null,
     var authors: String? = null,
@@ -40,6 +39,4 @@ data class MBook(
 
     @get:PropertyName("google_book_id")
     @set:PropertyName("google_book_id")
-    var googleBookId: String? = null
-)
-
+    var googleBookId: String? = null)

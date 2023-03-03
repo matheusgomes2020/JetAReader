@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,12 +31,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.jetareader.components.InputField
-import com.example.jetareader.components.RatingBar
-import com.example.jetareader.components.ReaderAppBar
+import com.example.jetareader.components.*
 import com.example.jetareader.data.DataOrException
 import com.example.jetareader.model.MBook
+import com.example.jetareader.navigation.ReaderScreens
 import com.example.jetareader.screens.home.HomeScreenViewModel
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -105,6 +108,8 @@ fun BookUpdateScreen(navController: NavController,
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ShowSimpleForm(book: MBook, navController: NavController) {
+
+    val context = LocalContext.current
 
     val notesText = remember {
         mutableStateOf("")
@@ -180,6 +185,55 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
         RatingBar(rating = it!!){ rating->
             ratingVal.value = rating
             Log.d("TAG", "ShowSimpleForm: ${ratingVal.value}")
+        }
+
+    }
+
+    Spacer(modifier = Modifier.padding(bottom = 15.dp))
+
+    Row( horizontalArrangement = Arrangement.SpaceBetween ) {
+
+        val changedNotes = book.notes != notesText.value
+        val changedRating = book.rating?.toInt() != ratingVal.value
+        val isFinishedTimeStamp = if (isFinishedReading.value) Timestamp.now() else book.finishedReading
+        val isStartedTimeStamp = if (isStartedReading.value) Timestamp.now() else book.startedReading
+
+        val bookUpdate = changedNotes || changedRating || isStartedReading.value || isFinishedReading.value
+
+        val bookToupdate = hashMapOf(
+            "finished_reading_at" to isFinishedTimeStamp,
+            "started_reading_at" to isStartedTimeStamp,
+            "rating" to ratingVal.value,
+            "notes" to notesText.value ).toMap()
+
+        RoundedButton( label = "Update" ) {
+
+            if ( bookUpdate ) {
+
+                FirebaseFirestore.getInstance()
+                    .collection( "books" )
+                    .document( book.id!! )
+                    .update( bookToupdate )
+                    .addOnCompleteListener {
+                        showToast(context, "Book Updated Successfully!")
+                        navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+
+                        // Log.d("Update", "ShowSimpleForm: ${task.result.toString()}")
+
+                    }.addOnFailureListener{
+                        Log.w("Error", "Error updating document" , it)
+                    }
+
+            }
+
+        }
+
+        Spacer(modifier = Modifier.width( 100.dp ) )
+
+        RoundedButton("Delete" ) {
+
+
+
         }
 
     }
