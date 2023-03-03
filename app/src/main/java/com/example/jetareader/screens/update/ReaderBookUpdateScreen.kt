@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.jetareader.components.InputField
+import com.example.jetareader.components.RatingBar
 import com.example.jetareader.components.ReaderAppBar
 import com.example.jetareader.data.DataOrException
 import com.example.jetareader.model.MBook
@@ -101,6 +102,7 @@ fun BookUpdateScreen(navController: NavController,
 
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ShowSimpleForm(book: MBook, navController: NavController) {
 
@@ -167,6 +169,17 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
                 Text(text = "Finished on: ${book.finishedReading}") //Todo: format
             }
 
+
+
+        }
+
+    }
+
+    Text(text = "Rating", modifier = Modifier.padding(bottom = 3.dp))
+    book.rating?.toInt().let {
+        RatingBar(rating = it!!){ rating->
+            ratingVal.value = rating
+            Log.d("TAG", "ShowSimpleForm: ${ratingVal.value}")
         }
 
     }
