@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -104,15 +105,69 @@ fun BookUpdateScreen(navController: NavController,
 fun ShowSimpleForm(book: MBook, navController: NavController) {
 
     val notesText = remember {
+        mutableStateOf("")
+    }
+    val isStartedReading = remember {
+        mutableStateOf(false)
+    }
 
-        mutableStateOf( "" )
+    val isFinishedReading = remember {
+        mutableStateOf(false)
 
+    }
+    val ratingVal = remember {
+        mutableStateOf(0)
     }
 
     SimpleForm( defaultValue = if ( book.notes.toString().isNotEmpty() ) book.notes.toString()
                 else "No thoughts available." ) { note ->
 
         notesText.value = note
+
+    }
+
+    Row(modifier = Modifier.padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start) {
+
+        TextButton(
+            onClick = { isStartedReading.value = true },
+            enabled = book.startedReading == null
+        ) {
+            if (book.startedReading == null) {
+                if (!isStartedReading.value) {
+                    Text(text = "Start Reading")
+                } else {
+                    Text(
+                        text = "Started Reading!",
+                        modifier = Modifier.alpha(0.6f),
+                        color = Color.Red.copy(alpha = 0.5f)
+                    )
+                }
+
+            }else {
+
+                Text(text = "Finished on: ${book.finishedReading}") //Todo: format data
+
+            }
+
+        }
+
+        Spacer(modifier = Modifier.height( 4.dp ))
+
+        TextButton(onClick = { isFinishedReading.value = true },
+            enabled = book.finishedReading == null) {
+            if (book.finishedReading == null) {
+                if (!isFinishedReading.value) {
+                    Text(text = "Mark as Read")
+                }else {
+                    Text(text = "Finished Reading!")
+                }
+            }else {
+                Text(text = "Finished on: ${book.finishedReading}") //Todo: format
+            }
+
+        }
 
     }
 
