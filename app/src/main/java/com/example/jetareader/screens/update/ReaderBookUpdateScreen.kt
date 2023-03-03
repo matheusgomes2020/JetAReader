@@ -36,6 +36,7 @@ import com.example.jetareader.data.DataOrException
 import com.example.jetareader.model.MBook
 import com.example.jetareader.navigation.ReaderScreens
 import com.example.jetareader.screens.home.HomeScreenViewModel
+import com.example.jetareader.utils.formatDate
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -154,7 +155,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
 
             }else {
 
-                Text(text = "Finished on: ${book.finishedReading}") //Todo: format data
+                Text(text = "Started on: ${book.startedReading?.let { formatDate(it) }}")
 
             }
 
@@ -171,7 +172,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
                     Text(text = "Finished Reading!")
                 }
             }else {
-                Text(text = "Finished on: ${book.finishedReading}") //Todo: format
+                Text(text = "Finished on: ${book.finishedReading?.let { formatDate(it) }}")
             }
 
 
